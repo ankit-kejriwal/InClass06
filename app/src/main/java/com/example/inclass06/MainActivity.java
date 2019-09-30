@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button button;
 
- // comment
+ // comment new
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
