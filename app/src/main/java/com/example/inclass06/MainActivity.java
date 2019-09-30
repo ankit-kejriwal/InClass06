@@ -13,6 +13,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +23,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -36,11 +40,16 @@ public class MainActivity extends AppCompatActivity {
        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isConnected()){
-                    new getKeyword().execute("http://dev.theappsdr.com/apis/photos/keywords.php");
-                } else {
-                    Toast.makeText(MainActivity.this, "No Active Internet Connecion", Toast.LENGTH_SHORT).show();
-                }
+                String[] category = {"entertainment","general","health","science","sports","technology"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Choose Category");
+                builder.setItems(category, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }
@@ -57,64 +66,67 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private class getKeyword extends AsyncTask<String,Void,String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            StringBuilder sb = new StringBuilder();
-            HttpURLConnection connection = null;
-            InputStream inputStream = null;
-            String result = null;
-            try {
-                URL url = new URL(strings[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-                if(connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    inputStream = connection.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line ="";
-                    while ((line = reader.readLine()) !=null) {
-                        sb.append(line);
-                    }
-                    result =  sb.toString();
-                }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if(connection!=null){
-                    connection.disconnect();
-                }
-                if(inputStream!=null){
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            final String[] temp = s.split(";");
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Choose item");
-
-            builder.setItems(temp, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String url = "http://dev.theappsdr.com/apis/photos/index.php" + "?" +"keyword="+temp[which];
-                    new getImageURL().execute(url);
-                }
-            });
-
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
-    }
-
+//    private class GetSimpleAsync extends AsyncTask<String, Void, ArrayList<Article>> {
+//        @Override
+//        protected ArrayList<Article> doInBackground(String... params) {
+//            StringBuilder stringBuilder = new StringBuilder();
+//            HttpURLConnection connection = null;
+//            BufferedReader reader = null;
+//            ArrayList<Article> result = new ArrayList<Article>();
+//            try {
+//                URL url = new URL(params[0]);
+//                connection = (HttpURLConnection) url.openConnection();
+//                connection.connect();
+//                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+//                    reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//                    String line = "";
+//                    while ((line = reader.readLine()) != null) {
+//                        stringBuilder.append(line);
+//                    }
+////                    String json = stringBuilder.toString();
+////                    JSONObject root = new JSONObject(json);
+////                    JSONArray persons = root.getJSONArray("persons");
+////                    for (int i = 0; i < persons.length(); i++) {
+////                        JSONObject personJSON = persons.getJSONObject(i);
+////                        Person person = new Person();
+////                        person.name = personJSON.getString("name");
+////                        person.id = personJSON.getLong(("id"));
+////                        person.age = personJSON.getInt("age");
+////
+////                        JSONObject addressJSON = personJSON.getJSONObject("address");
+////
+////                        Address address = new Address();
+////                        address.line1 = addressJSON.getString("line1");
+////                        address.city = addressJSON.getString("city");
+////                        address.state = addressJSON.getString("state");
+////                        address.zip = addressJSON.getString("zip");
+////                        person.address = address;
+////                        result.add(person);
+////
+////                    }
+//                }
+//            } catch (MalformedURLException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+////            catch (JSONException e) {
+////                e.printStackTrace();
+////            }
+//            finally {
+//                if (connection != null) {
+//                    connection.disconnect();
+//                }
+//                if (reader != null) {
+//                    try {
+//                        reader.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//            return result;
+//        }
+//    }
 
 }

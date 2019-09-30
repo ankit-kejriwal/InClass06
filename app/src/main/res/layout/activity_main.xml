@@ -79,18 +79,20 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextDesc"
-        app:srcCompat="@drawable/next"
-        tools:layout_editor_absoluteX="302dp" />
+        app:srcCompat="@drawable/next" />
 
     <ImageView
         android:id="@+id/imageViewPrev"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextDesc"
-        app:srcCompat="@drawable/prev"
-        tools:layout_editor_absoluteX="34dp" />
+        app:srcCompat="@drawable/prev" />
 
     <TextView
         android:id="@+id/textViewCount"
