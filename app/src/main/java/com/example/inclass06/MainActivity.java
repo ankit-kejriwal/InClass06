@@ -65,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
         imageViewprevious = findViewById(R.id.imageViewPrev);
         textViewcount = findViewById(R.id.textViewCount);
         editTextDesc.setEnabled(false);
+        textViewCategory.setText("Show Categories");
+        imageViewnext.setEnabled(false);
+        imageViewprevious.setEnabled(false);
 
         imageViewprevious.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,18 +94,23 @@ public class MainActivity extends AppCompatActivity {
        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String[] category = {"entertainment","general","health","science","sports","technology"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Choose Category");
-                builder.setItems(category, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String url = "https://newsapi.org/v2/top-headlines?country=us&category="+category[which]+"&apiKey=5c72617fea584de7bb9521936989e3c5";
-                        new GetSimpleAsync().execute(url);
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                    final String[] category = {"entertainment", "general", "health", "science", "sports", "technology"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("Choose Category");
+                    builder.setItems(category, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(isConnected()){
+                                String url = "https://newsapi.org/v2/top-headlines?country=us&category=" + category[which] + "&apiKey=5c72617fea584de7bb9521936989e3c5";
+                                textViewCategory.setText(category[which]);
+                                new GetSimpleAsync().execute(url);
+                            } else {
+                                Toast.makeText(MainActivity.this, "No Active connection", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
             }
         });
     }
@@ -183,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<Article> articles) {
-            progressDialog.dismiss();
             super.onPostExecute(articles);
             articleList = articles;
             setDisplay(currentIndex);
@@ -191,12 +198,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setDisplay(int index) {
-        Log.d("demo",articleList.get(index).toString());
-        textViewTitle.setText(articleList.get(index).getTitle());
-        textViewDate.setText(articleList.get(index).getPublishedAt());
-        editTextDesc.setText(articleList.get(index).getDescription());
-        textViewcount.setText(currentIndex+1 +" out of "+ articleList.size());
-        Picasso.get().load(articleList.get(index).getUrlToImage()).into(imageViewURL);
+        if(articleList.size() > 0){
+            if(articleList.size()>1){
+                imageViewnext.setEnabled(true);
+                imageViewprevious.setEnabled(true);
+            }
+            Log.d("demo",articleList.get(index).toString());
+            textViewTitle.setText(articleList.get(index).getTitle());
+            textViewDate.setText(articleList.get(index).getPublishedAt());
+            if(articleList.get(index).getDescription().equals("null")){
+                editTextDesc.setText("No Description");
+            } else {
+                editTextDesc.setText(articleList.get(index).getDescription());
+            }
+            textViewcount.setText(currentIndex+1 +" out of "+ articleList.size());
+            progressDialog.show();
+            Picasso.get().load(articleList.get(index).getUrlToImage()).into(imageViewURL);
+        } else {
+            Toast.makeText(this, "No News Found", Toast.LENGTH_SHORT).show();
+        }
+        progressDialog.dismiss();
     }
 
 
