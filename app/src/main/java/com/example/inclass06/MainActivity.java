@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +64,28 @@ public class MainActivity extends AppCompatActivity {
         textViewcount = findViewById(R.id.textViewCount);
         editTextDesc.setEnabled(false);
 
+        imageViewprevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentIndex--;
+                if(currentIndex < 0){
+                    currentIndex = articleList.size()-1;
+                }
+                setDisplay(currentIndex);
+            }
+        });
+
+        imageViewnext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentIndex++;
+                if(currentIndex > (articleList.size()-1)) {
+                    currentIndex = 0;
+                }
+                setDisplay(currentIndex);
+            }
+        });
+
        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.setItems(category, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String url = "https://newsapi.org/v2/top-headlines?category="+category[which]+"&apiKey=5c72617fea584de7bb9521936989e3c5";
+                        String url = "https://newsapi.org/v2/top-headlines?country=us&category="+category[which]+"&apiKey=5c72617fea584de7bb9521936989e3c5";
                         new GetSimpleAsync().execute(url);
                     }
                 });
@@ -159,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
         textViewDate.setText(articleList.get(index).getPublishedAt());
         editTextDesc.setText(articleList.get(index).getDescription());
         textViewcount.setText(currentIndex+1 +" out of "+ articleList.size());
+        Picasso.get().load(articleList.get(index).getUrlToImage()).into(imageViewURL);
     }
 
 
