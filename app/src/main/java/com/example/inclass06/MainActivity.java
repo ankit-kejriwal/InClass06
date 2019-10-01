@@ -3,6 +3,7 @@ package com.example.inclass06;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageViewURL;
     EditText editTextDesc;
     TextView textViewcount;
+    ProgressDialog progressDialog;
 
     ArrayList<Article> articleList = new ArrayList<>();
     int currentIndex = 0;
@@ -119,6 +121,16 @@ public class MainActivity extends AppCompatActivity {
 
     private class GetSimpleAsync extends AsyncTask<String, Void, ArrayList<Article>> {
         @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setMessage("Loading");
+            progressDialog.setMax(10);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
         protected ArrayList<Article> doInBackground(String... params) {
             StringBuilder stringBuilder = new StringBuilder();
             HttpURLConnection connection = null;
@@ -171,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<Article> articles) {
+            progressDialog.dismiss();
             super.onPostExecute(articles);
             articleList = articles;
             setDisplay(currentIndex);
