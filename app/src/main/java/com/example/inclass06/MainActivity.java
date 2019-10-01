@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if(isConnected()){
-                                String url = "https://newsapi.org/v2/top-headlines?country=us&category=" + category[which] + "&apiKey=5c72617fea584de7bb9521936989e3c5";
+                                String url = "https://newsapi.org/v2/top-headlines?country=us&category=" + category[which] + "&apiKey="+ getString(R.string.api_key);
                                 textViewCategory.setText(category[which]);
                                 new GetSimpleAsync().execute(url);
                             } else {
